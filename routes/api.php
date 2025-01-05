@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -9,8 +10,10 @@ use Illuminate\Support\Facades\Route;
 
 
 
-Route::post('/lodo', function (Request $request) {
+Route::post('/user', function (Request $request) {
 
-    dd($request->user());
     return $request->user();
 });
+
+Route::post('/register', [UserController::class, 'register'])->name('register');
+Route::post('/login', [UserController::class, 'login'])->name('login');
