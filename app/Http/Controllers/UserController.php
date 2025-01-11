@@ -7,6 +7,7 @@ use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Services\UserService;
+use Illuminate\Support\Facades\Password;
 
 class UserController extends Controller
 {
@@ -56,6 +57,39 @@ class UserController extends Controller
         $this->setMeta('message', 'User logged in successfully');
         $this->setData('token', $user->createToken('token')->plainTextToken);
         $this->setData('user', $user);
+        return $this->setResponse();
+    }
+
+    public function forgetPassword(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email:rfc,dns',
+        ]);
+        if ($validator->fails()) {
+            $this->setMeta('errors', $validator->errors());
+            return $this->setResponse();
+        }
+        $status = $this->userService->forgetPassword($request);
+        $status === Password::RESET_LINK_SENT ? $this->setMeta('status', $status) : $this->setMeta('status', $status);
+        $this->setMeta('message', 'Password reset link sent successfully');
+        return $this->setResponse();
+    }
+
+
+    public function resetPassword(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email:rfc,dns',
+            'token' => 'required',
+            'password' => 'required|min:8|confirmed|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/',
+        ]);
+        if ($validator->fails()) {
+            $this->setMeta('errors', $validator->errors());
+            return $this->setResponse();
+        }
+        $status = $this->userService->resetPassword($request);
+        $status === Password::PASSWORD_RESET ? $this->setMeta('status', $status) : $this->setMeta('status', $status);
+        $this->setMeta('message', 'Password reset successfully');
         return $this->setResponse();
     }
 }
