@@ -34,6 +34,7 @@ class UserController extends Controller
             return $this->setResponse();
         }
         $user = $this->userService->store($request);
+        $user->assignRole('user');
         $this->setMeta('message', 'User created successfully');
         $this->setData('user', $user);
         return $this->setResponse();
@@ -91,5 +92,51 @@ class UserController extends Controller
         $status === Password::PASSWORD_RESET ? $this->setMeta('status', $status) : $this->setMeta('status', $status);
         $this->setMeta('message', 'Password reset successfully');
         return $this->setResponse();
+    }
+
+    public function verifyEmail(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email:rfc,dns',
+        ]);
+        if ($validator->fails()) {
+            $this->setMeta('errors', $validator->errors());
+            return $this->setResponse();
+        }
+        $user = $this->userService->verifyEmail($request);
+        if (!$user) {
+            $this->setMeta('errors', 'User not found');
+            return $this->setResponse();
+        }
+        $this->setMeta('message', 'Email verified successfully');
+        $this->setData('user', $user);
+        return $this->setResponse();
+    }
+
+    public function verifyOtp(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email:rfc,dns',
+            'otp' => 'required|numeric',
+        ]);
+        if ($validator->fails()) {
+            $this->setMeta('errors', $validator->errors());
+            return $this->setResponse();
+        }
+        try {
+            $result = $this->userService->verifyOtp($request);
+
+            if (!$result['success']) {
+                $this->setMeta('errors', $result['message']);
+                return $this->setResponse();
+            }
+
+            $this->setMeta('message', 'OTP verified successfully');
+            $this->setData('user', $result['user']);
+            return $this->setResponse();
+        } catch (\Exception $e) {
+            $this->setMeta('errors', 'An error occurred while verifying OTP');
+            return $this->setResponse();
+        }
     }
 }
