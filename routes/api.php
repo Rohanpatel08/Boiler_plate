@@ -22,10 +22,14 @@ Route::middleware('auth:sanctum')->group(function () {
         }
     });
 });
-
-Route::post('/register', [UserController::class, 'register'])->name('register');
-Route::post('/login', [UserController::class, 'login'])->name('login');
-Route::post('verify/email', [UserController::class, 'verifyEmail'])->name('verify.email');
-Route::post('verify/otp', [UserController::class, 'verifyOtp'])->name('verify.otp');
-Route::post('/forget-password', [UserController::class, 'forgetPassword'])->name('forget-password');
-Route::post('/reset-password', [UserController::class, 'resetPassword'])->name('password.reset');
+Route::controller(UserController::class)->group(function () {
+    Route::post('/register', 'register')->name('register');
+    Route::post('/login',  'login')->name('login');
+    Route::post('/forget-password',  'forgetPassword')->name('forget-password');
+    Route::post('/reset-password',  'resetPassword')->name('password.reset');
+});
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::post('verify/email',  [UserController::class, 'verifyEmail'])->name('verify.email');
+    Route::post('verify/otp',  [UserController::class, 'verifyOtp'])->name('verify.otp');
+    Route::post('logout',  [UserController::class, 'logout'])->name('logout');
+});
