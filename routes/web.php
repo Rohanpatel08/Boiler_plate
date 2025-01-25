@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -7,5 +8,10 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-    dd('uaser');
+    $users = App\Models\User::all();
+    if (Auth::guard('admin')->check()) {
+        dd($users);
+    } else {
+        dd('no admin');
+    }
 });
