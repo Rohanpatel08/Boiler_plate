@@ -113,4 +113,16 @@ class UserService
             ];
         }
     }
+
+    public function logout($request)
+    {
+        $user = $this->userRepository->getUserByEmail($request->email);
+        if (!$user) {
+            $this->setMeta('errors', 'User not found');
+            return $this->setResponse();
+        }
+        $user->tokens()->delete();
+        $this->setMeta('message', 'User logged out successfully');
+        return $this->setResponse();
+    }
 }

@@ -35,7 +35,9 @@ class UserController extends Controller
         }
         $user = $this->userService->store($request);
         $user->assignRole('user');
+        $token = $user->createToken('token');
         $this->setMeta('message', 'User created successfully');
+        $this->setMeta('token', $token->plainTextToken);
         $this->setData('user', $user);
         return $this->setResponse();
     }
@@ -138,5 +140,12 @@ class UserController extends Controller
             $this->setMeta('errors', 'An error occurred while verifying OTP');
             return $this->setResponse();
         }
+    }
+
+    public function logout(Request $request)
+    {
+        $this->userService->logout($request);
+        $this->setMeta('message', 'User logged out successfully');
+        return $this->setResponse();
     }
 }
