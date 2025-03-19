@@ -9,10 +9,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/user', function (Request $request) {
-        // dd($request->user());
         $users = User::all();
-        // dd(Auth::guard());
-        if (Auth::guard('web')->check()) {
+        if (Auth::guard('sanctum')->check()) {
             dd($users);
         } else {
             dd('no admin');
