@@ -48,7 +48,9 @@ class UsersDataTable extends DataTable
             ->minifiedAjax()
             // ->dom('Bfrtip')
             ->orderBy(1)
-            ->selectStyleSingle();
+            ->selectStyleSingle()
+            ->lengthMenu([[5, 10, 25, 50, -1], [5, 10, 25, 50, 'All']])
+            ->addTableClass('table-bordered table-hover gy-5 gs-7  w-100 datatable');
     }
 
     /**
@@ -57,7 +59,7 @@ class UsersDataTable extends DataTable
     public function getColumns(): array
     {
         return [
-            Column::make('DT_RowIndex')->title('#')->searchable(false)->orderable(false),
+            Column::make('DT_RowIndex')->title('Sr.')->searchable(false)->orderable(false),
             Column::make('id')->visible(false),
             Column::make('name'),
             Column::make('email'),

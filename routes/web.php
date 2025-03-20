@@ -17,7 +17,7 @@ Route::get('/dashboard', function () {
     }
     Log::info('Date and Time');
     logger(now());
-    dd('no admin');
+    dd('no admin '. now());
 });
 
 Route::get('/test', function (UsersDataTable $dataTable) {
