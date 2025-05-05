@@ -1,6 +1,7 @@
 <?php
 
 use App\DataTables\UsersDataTable;
+use App\Http\Controllers\CrudController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Log;
 use App\Models\User;
@@ -20,6 +21,4 @@ Route::get('/dashboard', function () {
     dd('no admin '. now());
 });
 
-Route::get('/test', function (UsersDataTable $dataTable) {
-    return $dataTable->render('test');
-});
+Route::resource('/test', CrudController::class);
