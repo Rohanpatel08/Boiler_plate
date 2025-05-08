@@ -19,6 +19,9 @@ return new class extends Migration
             $table->string('password');
             $table->string('otp')->nullable();
             $table->timestamp('otp_expires_at')->nullable();
+            $table->enum('age',['18-25','26-40','41-60','61+'])->nullable();
+            $table->enum('gender',['male','female', 'other'])->nullable();
+            $table->string('profile')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

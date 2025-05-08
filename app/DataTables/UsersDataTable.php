@@ -24,9 +24,26 @@ class UsersDataTable extends DataTable
         return (new EloquentDataTable($query))
             ->addIndexColumn()
             ->addColumn('action', function ($row) {
-                return '<button class="btn btn-info btn-sm">Edit</button>';
+                $edit = '<a href="' . route('test.edit', $row->id) . '" class="btn btn-info btn-sm"><i class="fa fa-edit"></i></a>';
+                $delete = '<form action="' . route('test.destroy', $row->id) . '" method="POST" style="display:inline">
+                ' . csrf_field() . '
+                ' . method_field('DELETE') . '
+                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm(\'Are you sure you want to delete this user?\')"><i class="fa fa-trash"></i></button>
+                </form>';
+                return $edit . ' ' . $delete;
             })
-            ->rawColumns(['action']);
+            ->editColumn('created_at', function ($row) {
+                return $row->created_at->format('d-m-Y h:i A');
+            })
+            ->editColumn('updated_at', function ($row) {
+                return $row->updated_at->format('d-m-Y h:i A');
+            })
+            ->editColumn('profile', function ($row) {
+                return $row->profile 
+                ? '<img src="' . asset('storage/' . $row->profile) . '" alt="Profile Image" width="50" height="50">' 
+                : '';
+            })
+            ->rawColumns(['profile', 'action']);
     }
 
     /**
@@ -48,7 +65,9 @@ class UsersDataTable extends DataTable
             ->minifiedAjax()
             // ->dom('Bfrtip')
             ->orderBy(1)
-            ->selectStyleSingle();
+            ->selectStyleSingle()
+            ->lengthMenu([[5, 10, 25, 50, -1], [5, 10, 25, 50, 'All']])
+            ->addTableClass('table-bordered table-hover gy-5 gs-7  w-100 datatable');
     }
 
     /**
@@ -57,12 +76,13 @@ class UsersDataTable extends DataTable
     public function getColumns(): array
     {
         return [
-            Column::make('DT_RowIndex')->title('#')->searchable(false)->orderable(false),
+            Column::make('DT_RowIndex')->title('Sr.')->searchable(false)->orderable(false),
             Column::make('id')->visible(false),
             Column::make('name'),
             Column::make('email'),
-            Column::make('created_at'),
-            Column::make('updated_at'),
+            Column::make('age'),
+            Column::make('gender'),
+            Column::make('profile'),
             Column::make('action')
         ];
     }
